@@ -1,6 +1,6 @@
 {% set python_min = "3.11" %}
 {% set name = "ptychodus" %}
-{% set version = "1.3.2" %}
+{% set version = "1.4.1" %}
 
 package:
   name: ptychodus-split
@@ -8,7 +8,7 @@ package:
 
 source:
   url: https://github.com/AdvancedPhotonSource/ptychodus/archive/refs/tags/v{{ version }}.zip
-  sha256: 2055912c26297a9218c62a4bb926afee5118eb2e48b4b18a6ec0f27e676aa769
+  sha256: 45fbcb7b506984361daa911559c670cef52ef4cd79a99d4763f4f926baeca340
 
 build:
   number: 0
@@ -61,9 +61,10 @@ outputs:
     build:
       noarch: python
       entry_points:
-        - convert-to-ptychodus = ptychodus.convert_to_ptychodus:main
+        - convert-to-ptychodus = ptychodus.scripts.convert_to_ptychodus:main
         - ptychodus = ptychodus.__main__:main
-        - ptychodus-bdp = ptychodus.ptychodus_bdp:main
+        - ptychodus-bdp = ptychodus.scripts.ptychodus_bdp:main
+        - ptychodus-system-check = ptychodus.scripts.ptychodus_system_check:main
 
     requirements:
       host:
@@ -73,20 +74,22 @@ outputs:
         - setuptools_scm >=9.2
       run:
         - colorcet
-        - h5py
+        - h5py >=3
         - hdf5plugin
         - matplotlib-base
+        - mlflow-skinny
         - numpy
         - psutil
         - pydantic
         - python >={{ python_min }}
+        - pyyaml
         - requests
         - scikit-image
         - scipy
         - tifffile
         - watchdog
       run_constrained:
-        - globus-sdk
+        - globus-sdk >=4.5.0
         - globus-compute-sdk
         - pyqt =5.*
 
@@ -102,7 +105,7 @@ outputs:
 
 about:
   home: https://github.com/AdvancedPhotonSource/ptychodus
-  summary: Ptychodus is a ptychography data analysis application.
+  summary: Ptychodus is a ptychography data pipeline application.
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
