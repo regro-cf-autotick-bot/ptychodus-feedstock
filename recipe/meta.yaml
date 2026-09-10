@@ -23,6 +23,9 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('ptychodus', exact=True) }}
+        - globus-compute-sdk
+        - globus-sdk >=4.5.0
+        - xraydb >=4.5
 
     test:
       imports:
@@ -61,10 +64,10 @@ outputs:
     build:
       noarch: python
       entry_points:
-        - convert-to-ptychodus = ptychodus.scripts.convert_to_ptychodus:main
+        - convert-to-ptychodus = ptychodus.cli.convert_to_ptychodus:main
         - ptychodus = ptychodus.__main__:main
-        - ptychodus-bdp = ptychodus.scripts.ptychodus_bdp:main
-        - ptychodus-system-check = ptychodus.scripts.ptychodus_system_check:main
+        - ptychodus-bdp = ptychodus.cli.ptychodus_bdp:main
+        - ptychodus-system-check = ptychodus.cli.ptychodus_system_check:main
 
     requirements:
       host:
@@ -76,14 +79,19 @@ outputs:
         - colorcet
         - h5py >=3
         - hdf5plugin
+        - httpx
         - matplotlib-base
         - mlflow-skinny
         - numpy
+        # conda-forge's pydantic-ai is pydantic-ai-slim without the provider extras,
+        # so openai must be requested explicitly; ptychodus.model.agent.terminal
+        # imports pydantic_ai.models.openai unconditionally.
+        - openai
         - psutil
         - pydantic
+        - pydantic-ai >=1.0,<3
         - python >={{ python_min }}
         - pyyaml
-        - requests
         - scikit-image
         - scipy
         - tifffile
@@ -92,6 +100,7 @@ outputs:
         - globus-sdk >=4.5.0
         - globus-compute-sdk
         - pyqt =5.*
+        - xraydb >=4.5
 
     test:
       imports:
@@ -102,6 +111,10 @@ outputs:
       commands:
         - pip check
         - ptychodus --version
+        - convert-to-ptychodus --help
+        - ptychodus-bdp --help
+        - ptychodus-system-check
+        - test ! -f "$PREFIX/bin/ptychodus-store"
 
 about:
   home: https://github.com/AdvancedPhotonSource/ptychodus
